@@ -1,0 +1,54 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <div>
+            <input type="text" id="messageinput"/>
+        </div>
+        <div>
+            <button type="button" onclick="openSocket();" >Open</button>
+            <button type="button" onclick="sendSocket();" >Send</button>
+            <button type="button" onclick="closeSocket();" >Close</button>
+        </div>
+        <div id="messages"></div>
+       
+        <script type="text/javascript">
+            var webSocket;
+            var messages = document.getElementById("messages");
+
+            function openSocket(){
+                if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED){
+                   writeResponse("WebSocket is already opened.");
+                    return;
+                }
+                webSocket = new WebSocket("ws://localhost:8080/websocket");
+                webSocket.onopen = function(event){
+				    // data is undefined on the stage of handshake
+				    if(event.data === undefined)
+                        return;
+					writeResponse(event.data);
+                }; 
+                webSocket.onmessage = function(event){
+                    writeResponse(event.data);
+                };
+ 
+                webSocket.onclose = function(event){
+                    writeResponse('Connection closed');
+                }; 
+            }
+           
+            function sendSocket(){
+                var text = document.getElementById("messageinput").value;
+                webSocket.send(text);
+            }
+           
+            function closeSocket(){
+                webSocket.close();
+            }
+ 
+            function writeResponse(text){
+                messages.innerHTML += "<br/>" + text;
+            }
+        </script>
+    </body>
+</html>
