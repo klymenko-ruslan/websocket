@@ -10,7 +10,6 @@ public class SocketServer {
 
     @OnOpen
     public void onOpen(Session session) throws IOException {
-        //
         session.getBasicRemote().sendText("Connection Established");
     }
 
